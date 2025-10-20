@@ -228,10 +228,11 @@ app.get('/', async (req, res) => {
       LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
+        AND p.published_date IS NOT NULL
         AND ($1::uuid IS NULL OR p.patent_id != $1)
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
                p.filing_date, p.grant_date, p.published_date, ad.scores
-      ORDER BY p.published_date DESC NULLS LAST, p.created_at DESC
+      ORDER BY p.published_date DESC, p.created_at DESC
       LIMIT 3
     `;
     
@@ -294,6 +295,7 @@ app.get('/patent/:patentNumber', async (req, res) => {
       LEFT JOIN patent_inventors pi ON p.patent_id = pi.patent_id
       LEFT JOIN inventors i ON pi.inventor_id = i.inventor_id
       WHERE p.patent_number = $1
+        AND p.published_date IS NOT NULL
       GROUP BY p.patent_id, ad.deep_analysis_id
     `;
     
@@ -323,11 +325,12 @@ app.get('/patent/:patentNumber', async (req, res) => {
       WITH numbered AS (
         SELECT 
           p.patent_number,
-          LAG(p.patent_number) OVER (ORDER BY p.created_at DESC) as prev_patent,
-          LEAD(p.patent_number) OVER (ORDER BY p.created_at DESC) as next_patent
+          LAG(p.patent_number) OVER (ORDER BY p.published_date DESC, p.created_at DESC) as prev_patent,
+          LEAD(p.patent_number) OVER (ORDER BY p.published_date DESC, p.created_at DESC) as next_patent
         FROM patents p
         INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
         WHERE ad.executive_summary IS NOT NULL
+          AND p.published_date IS NOT NULL
       )
       SELECT prev_patent, next_patent 
       FROM numbered 
@@ -371,9 +374,10 @@ app.get('/archive', async (req, res) => {
       LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
+        AND p.published_date IS NOT NULL
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
                p.filing_date, p.grant_date, p.published_date, ad.executive_summary, ad.scores
-      ORDER BY p.published_date DESC NULLS LAST, p.created_at DESC
+      ORDER BY p.published_date DESC, p.created_at DESC
     `;
     
     const session = await getSession(req);
