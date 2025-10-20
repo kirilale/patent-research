@@ -98,19 +98,29 @@ async function getSession(req) {
   }
 }
 
-// Helper function to emit login event for newsletter subscription
+// Track sessions that have already emitted login events
+const emittedLoginEvents = new Set();
+
+// Helper function to emit login event for newsletter subscription (only once per session)
 async function emitLoginEvent(req) {
   try {
     const session = await getSession(req);
     if (session?.user) {
-      await inngest.send({
-        name: 'user.logged_in',
-        data: {
-          userId: session.user.id,
-          email: session.user.email,
-          name: session.user.name || '',
-        },
-      });
+      const sessionKey = `${session.user.id}-${session.session.id}`;
+      
+      // Only emit if we haven't already for this session
+      if (!emittedLoginEvents.has(sessionKey)) {
+        await inngest.send({
+          name: 'user.logged_in',
+          data: {
+            userId: session.user.id,
+            email: session.user.email,
+            name: session.user.name || '',
+          },
+        });
+        emittedLoginEvents.add(sessionKey);
+        console.log(`[Inngest] Login event emitted for ${session.user.email}`);
+      }
     }
   } catch (error) {
     console.error('[Inngest] Error emitting login event:', error);
@@ -170,7 +180,6 @@ app.get('/settings', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-  await emitLoginEvent(req);
   const session = await getSession(req);
   try {
     // Get featured patent (most recently published)
@@ -253,7 +262,6 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/patent/:patentNumber', async (req, res) => {
-  await emitLoginEvent(req);
   try {
     const { patentNumber } = req.params;
     
@@ -344,7 +352,6 @@ app.get('/patent/:patentNumber', async (req, res) => {
 });
 
 app.get('/archive', async (req, res) => {
-  await emitLoginEvent(req);
   try {
     const query = `
       SELECT 
