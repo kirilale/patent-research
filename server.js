@@ -24,7 +24,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://esm.sh"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://esm.sh", "https://analytics.futureofgaming.com"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: ["'self'", "https:"],
       fontSrc: ["'self'", "data:"],
