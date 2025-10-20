@@ -120,7 +120,13 @@ async function emitLoginEvent(req) {
 
 // Routes
 app.get('/login', (req, res) => {
-  res.render('login');
+  const baseURL = process.env.NODE_ENV === 'production' 
+    ? process.env.BETTER_AUTH_URL 
+    : 'http://localhost:3000';
+  
+  res.render('login', {
+    baseURL: baseURL
+  });
 });
 
 app.get('/loading', (req, res) => {
