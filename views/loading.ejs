@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - Future of Gaming</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <h1>Preparing your experience...</h1>
+    </div>
+    <script>
+        // Get redirect URL from query param or default to home
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get('redirect') || '/';
+        
+        // Wait 1.5 seconds to allow auto-subscribe to complete, then redirect
+        setTimeout(() => {
+            window.location.href = redirectTo;
+        }, 1500);
+    </script>
+</body>
+</html>

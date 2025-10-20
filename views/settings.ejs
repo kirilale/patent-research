@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Future of Gaming</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <div class="settings-container">
+        <h1>Account Settings</h1>
+        
+        <div class="settings-section">
+            <h2>Profile</h2>
+            <div class="settings-item">
+                <label>Email</label>
+                <div class="settings-value"><%= user.email %></div>
+            </div>
+            <% if (user.name) { %>
+            <div class="settings-item">
+                <label>Name</label>
+                <div class="settings-value"><%= user.name %></div>
+            </div>
+            <% } %>
+        </div>
+
+        <div class="settings-section">
+            <h2>Newsletter</h2>
+            <div class="settings-item">
+                <label>Subscription Status</label>
+                <div class="settings-value">
+                    <% if (newsletterStatus === 'subscribed') { %>
+                        <span class="status-badge status-active">✓ Subscribed</span>
+                        <p class="status-description">You're receiving our weekly newsletter</p>
+                    <% } else if (newsletterStatus === 'unsubscribed') { %>
+                        <span class="status-badge status-inactive">Unsubscribed</span>
+                        <p class="status-description">You've opted out of our newsletter</p>
+                    <% } else { %>
+                        <span class="status-badge status-pending">Not subscribed</span>
+                        <p class="status-description">You're not subscribed to our newsletter</p>
+                    <% } %>
+                </div>
+            </div>
+            
+            <% if (newsletterStatus !== 'subscribed') { %>
+            <div class="settings-item">
+                <button class="btn-primary" id="subscribeBtn">Subscribe to Newsletter</button>
+                <div id="subscribeMessage"></div>
+            </div>
+            <% } %>
+        </div>
+
+        <div class="settings-section">
+            <h2>Account</h2>
+            <form action="/api/auth/sign-out" method="POST" onsubmit="return handleLogout(event)">
+                <button type="submit" class="btn-secondary">Sign Out</button>
+            </form>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        async function handleLogout(event) {
+            event.preventDefault();
+            try {
+                await fetch('/api/auth/sign-out', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Logout error:', error);
+                event.target.submit();
+            }
+            return false;
+        }
+
+        <% if (newsletterStatus !== 'subscribed') { %>
+        document.getElementById('subscribeBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('subscribeBtn');
+            const msg = document.getElementById('subscribeMessage');
+            
+            btn.disabled = true;
+            btn.textContent = 'Subscribing...';
+            msg.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/newsletter/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: '<%= user.email %>' })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    msg.innerHTML = '<p style="color: #22c55e; margin-top: 12px;">✓ ' + data.message + '</p>';
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    msg.innerHTML = '<p style="color: #ef4444; margin-top: 12px;">✗ ' + data.error + '</p>';
+                    btn.disabled = false;
+                    btn.textContent = 'Subscribe to Newsletter';
+                }
+            } catch (error) {
+                msg.innerHTML = '<p style="color: #ef4444; margin-top: 12px;">✗ Something went wrong</p>';
+                btn.disabled = false;
+                btn.textContent = 'Subscribe to Newsletter';
+            }
+        });
+        <% } %>
+    </script>
+</body>
+</html>

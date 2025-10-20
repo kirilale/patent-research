@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= toTitleCase(patent.title) %> - Future of Gaming</title>
+    <meta name="description" content="<%= patent.abstract ? patent.abstract.substring(0, 155) : patent.title %>">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="<%= toTitleCase(patent.title) %>">
+    <meta property="og:description" content="<%= patent.abstract ? patent.abstract.substring(0, 200) : patent.title %>">
+    <meta property="og:url" content="<%= siteConfig.url %>/patent/<%= patent.patent_number %>">
+    <meta property="og:image" content="<%= siteConfig.url %>/api/patent-card/<%= patent.patent_number %>.svg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Future of Gaming">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= toTitleCase(patent.title) %>">
+    <meta name="twitter:description" content="<%= patent.abstract ? patent.abstract.substring(0, 200) : patent.title %>">
+    <meta name="twitter:image" content="<%= siteConfig.url %>/api/patent-card/<%= patent.patent_number %>.svg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Schema.org structured data for Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "<%= toTitleCase(patent.title).replace(/"/g, '\\"') %>",
+      "description": "<%= patent.abstract ? patent.abstract.substring(0, 200).replace(/"/g, '\\"') : patent.title.replace(/"/g, '\\"') %>",
+      "url": "<%= siteConfig.url %>/patent/<%= patent.patent_number %>",
+      "datePublished": "<%= patent.grant_date ? patent.grant_date.toISOString() : patent.filing_date.toISOString() %>",
+      <% if (patent.grant_date) { %>
+      "dateModified": "<%= patent.grant_date.toISOString() %>",
+      <% } %>
+      "author": {
+        "@type": "Organization",
+        "name": "Future of Gaming"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Future of Gaming",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "<%= siteConfig.url %>/logo.png"
+        }
+      },
+      <% if (patent.assignees && patent.assignees.length > 0 && patent.assignees[0]) { %>
+      "about": {
+        "@type": "Organization",
+        "name": "<%= patent.assignees[0].replace(/"/g, '\\"') %>"
+      },
+      <% } %>
+      "keywords": "gaming patent, <%= patent.patent_number %>, gaming innovation, patent analysis<% if (patent.assignees && patent.assignees[0]) { %>, <%= patent.assignees[0] %><% } %>"
+    }
+    </script>
+    
+    <% if (patent.scores) { %>
+    <!-- Schema.org structured data for Review/Rating -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Review",
+      "itemReviewed": {
+        "@type": "CreativeWork",
+        "name": "<%= toTitleCase(patent.title).replace(/"/g, '\\"') %>"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "<%= patent.scores.gaming_relevance_score || 5 %>",
+        "bestRating": "10",
+        "worstRating": "1"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Future of Gaming"
+      }
+    }
+    </script>
+    <% } %>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <article class="patent-detail">
+        <!-- Header with Key Info -->
+        <header class="patent-header">
+            <% if (patent.published_date) { %>
+            <div class="patent-meta">Published Date: <%= new Date(patent.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+            <% } %>
+            <h1><%= toTitleCase(patent.title) %></h1>
+            <% if (patent.assignees && patent.assignees.length > 0) { %>
+            <p class="assignee"><%= patent.assignees.filter(a => a !== null).join(', ') %></p>
+            <% } %>
+            <div class="patent-meta">
+                Patent <%= patent.patent_number %>
+                <% if (patent.filing_date) { %>
+                | Filed: <%= new Date(patent.filing_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                <% } %>
+                <% if (patent.grant_date) { %>
+                | Granted: <%= new Date(patent.grant_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                <% } %>
+            </div>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="table-of-contents">
+            <h2>Contents</h2>
+            <ul>
+                <% if (patent.scores) { %><li><a href="#scores">Analysis Scores</a></li><% } %>
+                <% if (patent.executive_summary) { %><li><a href="#executive-summary">Executive Summary</a></li><% } %>
+                <% if (patent.bottom_line) { %><li><a href="#bottom-line">Bottom Line</a></li><% } %>
+                <% if (patent.technology_deep_dive) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#technology">Technology Deep Dive</a></li><% } %>
+                <% if (patent.practical_applications) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#applications">Practical Applications</a></li><% } %>
+                <% if (patent.what_this_looks_like) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#player-experience">Player Experience</a></li><% } %>
+                <% if (patent.scenarios) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#scenarios">Future Scenarios</a></li><% } %>
+                <% if (patent.competitive_landscape || patent.competitive_impact) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#competitive">Competitive Analysis</a></li><% } %>
+                <% if (patent.reality_check) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#reality-check">Reality Check</a></li><% } %>
+                <% if (patent.what_to_watch) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#what-to-watch">What to Watch</a></li><% } %>
+                <% if (patent.audience_takeaways) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#takeaways">Audience Takeaways</a></li><% } %>
+                <% if (patent.final_take) { %><li><a href="#final-take">Final Take</a></li><% } %>
+            </ul>
+        </nav>
+
+        <!-- Scores Overview -->
+        <% if (patent.scores) { %>
+        <section id="scores" class="scores-overview">
+            <div class="scores-grid-compact">
+                <% if (patent.scores.gaming_relevance_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.gaming_relevance_score %></div>
+                    <div class="score-label">Gaming Relevance</div>
+                </div>
+                <% } %>
+                <% if (patent.scores.innovation_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.innovation_score %></div>
+                    <div class="score-label">Innovation</div>
+                </div>
+                <% } %>
+                <% if (patent.scores.commercial_viability_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.commercial_viability_score %></div>
+                    <div class="score-label">Commercial Viability</div>
+                </div>
+                <% } %>
+                <% if (patent.scores.disruptiveness_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.disruptiveness_score %></div>
+                    <div class="score-label">Disruptiveness</div>
+                </div>
+                <% } %>
+                <% if (patent.scores.implementation_feasibility_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.implementation_feasibility_score %></div>
+                    <div class="score-label">Feasibility</div>
+                </div>
+                <% } %>
+                <% if (patent.scores.patent_strength_score) { %>
+                <div class="score-card">
+                    <div class="score-value"><%= patent.scores.patent_strength_score %></div>
+                    <div class="score-label">Patent Strength</div>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <% } %>
+
+        <!-- Executive Summary - Most Important -->
+        <% if (patent.executive_summary) { %>
+        <section id="executive-summary" class="section-primary">
+            <h2 class="section-heading">Executive Summary</h2>
+            <% if (patent.executive_summary.key_finding) { %>
+            <div class="key-finding">
+                <%= patent.executive_summary.key_finding %>
+            </div>
+            <% } %>
+            <% if (patent.executive_summary.one_paragraph_overview) { %>
+            <div class="overview-text">
+                <%= patent.executive_summary.one_paragraph_overview %>
+            </div>
+            <% } %>
+            <% if (patent.executive_summary.why_this_matters_now) { %>
+            <div class="why-matters">
+                <h3>Why This Matters Now</h3>
+                <p><%= patent.executive_summary.why_this_matters_now %></p>
+            </div>
+            <% } %>
+        </section>
+        <% } %>
+
+        <!-- Bottom Line - Quick Takeaways -->
+        <% if (patent.bottom_line) { %>
+        <section id="bottom-line" class="section-highlight">
+            <h2 class="section-heading">Bottom Line</h2>
+            <div class="bottom-line-grid">
+                <% if (patent.bottom_line.for_gamers) { %>
+                <div class="bottom-line-card">
+                    <h3>For Gamers</h3>
+                    <p><%= patent.bottom_line.for_gamers %></p>
+                </div>
+                <% } %>
+                <% if (patent.bottom_line.for_developers) { %>
+                <div class="bottom-line-card">
+                    <h3>For Developers</h3>
+                    <p><%= patent.bottom_line.for_developers %></p>
+                </div>
+                <% } %>
+                <% if (patent.bottom_line.for_everyone_else) { %>
+                <div class="bottom-line-card">
+                    <h3>For Everyone Else</h3>
+                    <p><%= patent.bottom_line.for_everyone_else %></p>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <% } %>
+
+        <!-- Technology Deep Dive -->
+        <% if (patent.technology_deep_dive) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="technology" class="section-standard">
+            <h2 class="section-heading">Technology Deep Dive</h2>
+            <% if (patent.technology_deep_dive.how_it_works) { %>
+            <div class="tech-block">
+                <h3>How It Works</h3>
+                <p><%= patent.technology_deep_dive.how_it_works %></p>
+            </div>
+            <% } %>
+            <% if (patent.technology_deep_dive.what_makes_it_novel) { %>
+            <div class="tech-block">
+                <h3>What Makes It Novel</h3>
+                <p><%= patent.technology_deep_dive.what_makes_it_novel %></p>
+            </div>
+            <% } %>
+            <div class="tech-details-grid">
+                <% if (patent.technology_deep_dive.key_technical_elements && Array.isArray(patent.technology_deep_dive.key_technical_elements) && patent.technology_deep_dive.key_technical_elements.length > 0) { %>
+                <div class="tech-detail-box">
+                    <h4>Key Technical Elements</h4>
+                    <ul>
+                        <% patent.technology_deep_dive.key_technical_elements.forEach(element => { %>
+                        <li><%= element %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+                <% if (patent.technology_deep_dive.technical_limitations && Array.isArray(patent.technology_deep_dive.technical_limitations) && patent.technology_deep_dive.technical_limitations.length > 0) { %>
+                <div class="tech-detail-box">
+                    <h4>Technical Limitations</h4>
+                    <ul>
+                        <% patent.technology_deep_dive.technical_limitations.forEach(limitation => { %>
+                        <li><%= limitation %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- Practical Applications -->
+        <% if (patent.practical_applications) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="applications" class="section-standard">
+            <h2 class="section-heading">Practical Applications</h2>
+            <div class="applications-grid">
+                <% if (patent.practical_applications.use_case_1) { %>
+                <div class="application-card">
+                    <h3>Use Case 1</h3>
+                    <p><%= patent.practical_applications.use_case_1.description %></p>
+                    <% if (patent.practical_applications.use_case_1.game_types && Array.isArray(patent.practical_applications.use_case_1.game_types)) { %>
+                    <div class="tags">
+                        <% patent.practical_applications.use_case_1.game_types.forEach(type => { %>
+                        <span class="tag"><%= type %></span>
+                        <% }); %>
+                    </div>
+                    <% } %>
+                    <% if (patent.practical_applications.use_case_1.timeline) { %>
+                    <p class="timeline"><strong>Timeline:</strong> <%= patent.practical_applications.use_case_1.timeline %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.practical_applications.use_case_2) { %>
+                <div class="application-card">
+                    <h3>Use Case 2</h3>
+                    <p><%= patent.practical_applications.use_case_2.description %></p>
+                    <% if (patent.practical_applications.use_case_2.game_types && Array.isArray(patent.practical_applications.use_case_2.game_types)) { %>
+                    <div class="tags">
+                        <% patent.practical_applications.use_case_2.game_types.forEach(type => { %>
+                        <span class="tag"><%= type %></span>
+                        <% }); %>
+                    </div>
+                    <% } %>
+                    <% if (patent.practical_applications.use_case_2.timeline) { %>
+                    <p class="timeline"><strong>Timeline:</strong> <%= patent.practical_applications.use_case_2.timeline %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.practical_applications.use_case_3) { %>
+                <div class="application-card">
+                    <h3>Use Case 3</h3>
+                    <p><%= patent.practical_applications.use_case_3.description %></p>
+                    <% if (patent.practical_applications.use_case_3.game_types && Array.isArray(patent.practical_applications.use_case_3.game_types)) { %>
+                    <div class="tags">
+                        <% patent.practical_applications.use_case_3.game_types.forEach(type => { %>
+                        <span class="tag"><%= type %></span>
+                        <% }); %>
+                    </div>
+                    <% } %>
+                    <% if (patent.practical_applications.use_case_3.timeline) { %>
+                    <p class="timeline"><strong>Timeline:</strong> <%= patent.practical_applications.use_case_3.timeline %></p>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- What This Looks Like - Player Experience -->
+        <% if (patent.what_this_looks_like && patent.what_this_looks_like.player_experience) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="player-experience" class="section-standard">
+            <h2 class="section-heading">What This Looks Like: Player Experience</h2>
+            <div class="scenarios-grid">
+                <% if (patent.what_this_looks_like.player_experience.scenario_1) { %>
+                <div class="scenario-card">
+                    <h3><%= patent.what_this_looks_like.player_experience.scenario_1.title %></h3>
+                    <div class="scenario-content">
+                        <p class="scenario-moment"><%= patent.what_this_looks_like.player_experience.scenario_1.moment %></p>
+                        <p class="scenario-catch"><strong>The Catch:</strong> <%= patent.what_this_looks_like.player_experience.scenario_1.the_catch %></p>
+                    </div>
+                </div>
+                <% } %>
+                <% if (patent.what_this_looks_like.player_experience.scenario_2) { %>
+                <div class="scenario-card">
+                    <h3><%= patent.what_this_looks_like.player_experience.scenario_2.title %></h3>
+                    <div class="scenario-content">
+                        <p class="scenario-moment"><%= patent.what_this_looks_like.player_experience.scenario_2.moment %></p>
+                        <p class="scenario-catch"><strong>The Catch:</strong> <%= patent.what_this_looks_like.player_experience.scenario_2.the_catch %></p>
+                    </div>
+                </div>
+                <% } %>
+                <% if (patent.what_this_looks_like.player_experience.scenario_3) { %>
+                <div class="scenario-card">
+                    <h3><%= patent.what_this_looks_like.player_experience.scenario_3.title %></h3>
+                    <div class="scenario-content">
+                        <p class="scenario-moment"><%= patent.what_this_looks_like.player_experience.scenario_3.moment %></p>
+                        <p class="scenario-catch"><strong>The Catch:</strong> <%= patent.what_this_looks_like.player_experience.scenario_3.the_catch %></p>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <% } %>
+
+        <!-- Scenarios: Best/Worst/Most Likely -->
+        <% if (patent.scenarios) { %>
+        <section id="scenarios" class="section-standard">
+            <h2 class="section-heading">Future Scenarios</h2>
+            <div class="future-scenarios">
+                <% if (patent.scenarios.best_case) { %>
+                <div class="scenario-box scenario-best">
+                    <h3>Best Case</h3>
+                    <% if (patent.scenarios.best_case.probability) { %>
+                    <p class="probability"><%= patent.scenarios.best_case.probability %></p>
+                    <% } %>
+                    <% if (patent.scenarios.best_case.outcome) { %>
+                    <p class="scenario-outcome"><%= patent.scenarios.best_case.outcome %></p>
+                    <% } %>
+                    <% if (patent.scenarios.best_case.scenario) { %>
+                    <p class="scenario-detail"><%= patent.scenarios.best_case.scenario %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.scenarios.most_likely) { %>
+                <div class="scenario-box scenario-likely">
+                    <h3>Most Likely</h3>
+                    <% if (patent.scenarios.most_likely.probability) { %>
+                    <p class="probability"><%= patent.scenarios.most_likely.probability %></p>
+                    <% } %>
+                    <% if (patent.scenarios.most_likely.outcome) { %>
+                    <p class="scenario-outcome"><%= patent.scenarios.most_likely.outcome %></p>
+                    <% } %>
+                    <% if (patent.scenarios.most_likely.scenario) { %>
+                    <p class="scenario-detail"><%= patent.scenarios.most_likely.scenario %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.scenarios.worst_case) { %>
+                <div class="scenario-box scenario-worst">
+                    <h3>Worst Case</h3>
+                    <% if (patent.scenarios.worst_case.probability) { %>
+                    <p class="probability"><%= patent.scenarios.worst_case.probability %></p>
+                    <% } %>
+                    <% if (patent.scenarios.worst_case.outcome) { %>
+                    <p class="scenario-outcome"><%= patent.scenarios.worst_case.outcome %></p>
+                    <% } %>
+                    <% if (patent.scenarios.worst_case.scenario) { %>
+                    <p class="scenario-detail"><%= patent.scenarios.worst_case.scenario %></p>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- Competitive Analysis -->
+        <% if (patent.competitive_landscape || patent.competitive_impact) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="competitive" class="section-standard">
+            <h2 class="section-heading">Competitive Analysis</h2>
+            
+            <% if (patent.competitive_impact && patent.competitive_impact.patent_holder) { %>
+            <div class="competitive-holder">
+                <h3>Patent Holder Position</h3>
+                <p><%= patent.competitive_impact.patent_holder %></p>
+            </div>
+            <% } %>
+
+            <% if (patent.competitive_impact && patent.competitive_impact.companies_affected && Array.isArray(patent.competitive_impact.companies_affected) && patent.competitive_impact.companies_affected.length > 0) { %>
+            <div class="companies-affected">
+                <h3>Companies Affected</h3>
+                <% patent.competitive_impact.companies_affected.forEach(company => { %>
+                <div class="company-impact">
+                    <h4><%= company.company %></h4>
+                    <p><%= company.impact %></p>
+                </div>
+                <% }); %>
+            </div>
+            <% } %>
+
+            <% if (patent.competitive_landscape) { %>
+            <div class="competitive-details">
+                <% if (patent.competitive_landscape.competitive_advantage) { %>
+                <div class="comp-block">
+                    <h4>Competitive Advantage</h4>
+                    <p><%= patent.competitive_landscape.competitive_advantage %></p>
+                </div>
+                <% } %>
+                <% if (patent.competitive_landscape.freedom_to_operate) { %>
+                <div class="comp-block">
+                    <h4>Freedom to Operate</h4>
+                    <p><%= patent.competitive_landscape.freedom_to_operate %></p>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- Reality Check -->
+        <% if (patent.reality_check) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="reality-check" class="section-warning">
+            <h2 class="section-heading">Reality Check</h2>
+            <% if (patent.reality_check.hype_vs_substance) { %>
+            <div class="reality-block">
+                <h3>Hype vs Substance</h3>
+                <p><%= patent.reality_check.hype_vs_substance %></p>
+            </div>
+            <% } %>
+            <% if (patent.reality_check.biggest_risk) { %>
+            <div class="reality-block">
+                <h3>Biggest Risk</h3>
+                <p><%= patent.reality_check.biggest_risk %></p>
+            </div>
+            <% } %>
+            <% if (patent.reality_check.key_assumptions && Array.isArray(patent.reality_check.key_assumptions) && patent.reality_check.key_assumptions.length > 0) { %>
+            <div class="reality-block">
+                <h3>Key Assumptions</h3>
+                <ul>
+                    <% patent.reality_check.key_assumptions.forEach(assumption => { %>
+                    <li><%= assumption %></li>
+                    <% }); %>
+                </ul>
+            </div>
+            <% } %>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- What to Watch -->
+        <% if (patent.what_to_watch) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="what-to-watch" class="section-standard">
+            <h2 class="section-heading">What to Watch</h2>
+            <div class="watch-grid">
+                <% if (patent.what_to_watch.key_milestones && Array.isArray(patent.what_to_watch.key_milestones) && patent.what_to_watch.key_milestones.length > 0) { %>
+                <div class="watch-column">
+                    <h3>Key Milestones</h3>
+                    <ul>
+                        <% patent.what_to_watch.key_milestones.forEach(milestone => { %>
+                        <li><%= milestone %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+                <% if (patent.what_to_watch.competitor_moves && Array.isArray(patent.what_to_watch.competitor_moves) && patent.what_to_watch.competitor_moves.length > 0) { %>
+                <div class="watch-column">
+                    <h3>Competitor Moves</h3>
+                    <ul>
+                        <% patent.what_to_watch.competitor_moves.forEach(move => { %>
+                        <li><%= move %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- Audience Takeaways -->
+        <% if (patent.audience_takeaways) { %>
+        <%- include('partials/locked-wrapper-start') %>
+        <section id="takeaways" class="section-standard">
+            <h2 class="section-heading">Audience Takeaways</h2>
+            <div class="takeaways-grid">
+                <% if (patent.audience_takeaways.game_enthusiasts) { %>
+                <div class="takeaway-card">
+                    <h3>Game Enthusiasts</h3>
+                    <% if (patent.audience_takeaways.game_enthusiasts.what_this_means) { %>
+                    <p><%= patent.audience_takeaways.game_enthusiasts.what_this_means %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.audience_takeaways.startups_indie_devs) { %>
+                <div class="takeaway-card">
+                    <h3>Startups & Indie Devs</h3>
+                    <% if (patent.audience_takeaways.startups_indie_devs.action_item) { %>
+                    <p><strong>Action:</strong> <%= patent.audience_takeaways.startups_indie_devs.action_item %></p>
+                    <% } %>
+                    <% if (patent.audience_takeaways.startups_indie_devs.opportunity_or_threat) { %>
+                    <p><strong>Impact:</strong> <%= patent.audience_takeaways.startups_indie_devs.opportunity_or_threat %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.audience_takeaways.gaming_industry_employees) { %>
+                <div class="takeaway-card">
+                    <h3>Industry Employees</h3>
+                    <% if (patent.audience_takeaways.gaming_industry_employees.developers_engineers) { %>
+                    <p><%= patent.audience_takeaways.gaming_industry_employees.developers_engineers %></p>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('partials/locked-wrapper-end') %>
+        <% } %>
+
+        <!-- Final Take -->
+        <% if (patent.final_take) { %>
+        <section id="final-take" class="section-final">
+            <h2 class="section-heading">Final Take</h2>
+            <% if (patent.final_take.one_sentence_verdict) { %>
+            <div class="final-verdict">
+                <%= patent.final_take.one_sentence_verdict %>
+            </div>
+            <% } %>
+            <% if (patent.final_take.analyst_bet) { %>
+            <div class="final-block">
+                <h3>Analyst Bet</h3>
+                <p><%= patent.final_take.analyst_bet %></p>
+            </div>
+            <% } %>
+            <% if (patent.final_take.biggest_unknown) { %>
+            <div class="final-block">
+                <h3>Biggest Unknown</h3>
+                <p><%= patent.final_take.biggest_unknown %></p>
+            </div>
+            <% } %>
+        </section>
+        <% } %>
+    </article>
+
+    <%- include('partials/floating-nav') %>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future of Gaming - Strategic Intelligence on Gaming Patents</title>
+    <meta name="description" content="Weekly analysis of gaming patents, filings, and industry shifts. Discover where gaming is heading before it hits the news.">
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Future of Gaming",
+      "url": "<%= siteConfig.url %>",
+      "description": "Strategic intelligence on gaming's next moves through patent analysis",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Future of Gaming",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "<%= siteConfig.url %>/logo.png"
+        }
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "Future of Gaming",
+      "url": "<%= siteConfig.url %>",
+      "logo": "<%= siteConfig.url %>/logo.png",
+      "description": "Weekly analysis of patents, filings, and industry shifts that signal where gaming is heading",
+      "sameAs": [
+        "<%= linksConfig.twitter %>",
+        "<%= linksConfig.linkedin %>",
+        "<%= linksConfig.bluesky %>"
+      ]
+    }
+    </script>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <section class="hero">
+        <h1>Future of Gaming</h1>
+        <p class="subtitle">See What Major Studios Are Building Years Before Launch</p>
+        <p class="description">
+            In-depth weekly analysis revealing what's actually being developed in gaming—from new player experiences to technical innovations to competitive strategies. For players, developers, investors, and industry professionals.
+        </p>
+        <% if (!user || (user && typeof newsletterStatus !== 'undefined' && newsletterStatus !== 'subscribed')) { %>
+        <form class="email-capture newsletter-form" data-form="hero">
+            <input type="email" name="email" placeholder="your@email.com" required <% if (user) { %>value="<%= user.email %>"<% } %>>
+            <button type="submit">Subscribe</button>
+        </form>
+        <div class="newsletter-message" data-message="hero"></div>
+        <% } else if (user && newsletterStatus === 'subscribed') { %>
+        <p style="color: #22c55e; font-size: 16px; margin-top: 16px;">✓ You're subscribed to our newsletter</p>
+        <% } %>
+    </section>
+
+    <% if (featured) { %>
+    <section class="featured">
+        <div class="section-title">Latest Analysis</div>
+        <div class="featured-content">
+            <div class="featured-text">
+                <h2><%= featured.title %></h2>
+                <% if (featured.executive_summary && featured.executive_summary.key_finding) { %>
+                <p class="excerpt"><%= featured.executive_summary.key_finding %></p>
+                <% } else { %>
+                <p class="excerpt"><%= featured.abstract.substring(0, 200) %>...</p>
+                <% } %>
+                <div class="meta">
+                    <% if (featured.scores && featured.scores.impact_score) { %>
+                    <div class="meta-item">
+                        Impact
+                        <span><%= featured.scores.impact_score %>/10</span>
+                    </div>
+                    <% } %>
+                    <% if (featured.published_date) { %>
+                    <div class="meta-item">
+                        Published Date
+                        <span><%= new Date(featured.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+                    </div>
+                    <% } %>
+                    <% if (featured.assignees && featured.assignees.length > 0) { %>
+                    <div class="meta-item">
+                        Company
+                        <span><%= featured.assignees.filter(a => a !== null).join(', ') %></span>
+                    </div>
+                    <% } %>
+                </div>
+                <a href="/patent/<%= featured.patent_number %>" class="read-link">Read full analysis →</a>
+            </div>
+            <div class="featured-visual">
+                <img src="/api/patent-card/<%= featured.patent_number %>.svg" alt="<%= featured.title %> Scorecard" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (recentPatents && recentPatents.length > 0) { %>
+    <section class="analysis-grid">
+        <div class="section-title">Recent Intelligence</div>
+        <div class="grid">
+            <% recentPatents.forEach(patent => { %>
+            <a href="/patent/<%= patent.patent_number %>" class="grid-item">
+                <% if (patent.published_date) { %>
+                <div style="font-size: 10px; color: #999; margin-bottom: 4px;">Published Date: <%= new Date(patent.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+                <% } %>
+                <div class="label" style="font-size: 12px; font-weight: 600;">
+                    <%= patent.assignees && patent.assignees.length > 0 ? patent.assignees.filter(a => a !== null).join(', ') : 'Patent Analysis' %>
+                </div>
+                <h3><%= toTitleCase(patent.title) %></h3>
+                <p><%= patent.abstract.substring(0, 150) %>...</p>
+            </a>
+            <% }); %>
+        </div>
+    </section>
+    <% } %>
+
+    <section class="cta">
+        <h2>Don't miss what's coming</h2>
+        <p>One strategic brief every Tuesday. Early signals others miss.</p>
+        <% if (!user || (user && typeof newsletterStatus !== 'undefined' && newsletterStatus !== 'subscribed')) { %>
+        <form class="email-capture newsletter-form" data-form="cta">
+            <input type="email" name="email" placeholder="your@email.com" required <% if (user) { %>value="<%= user.email %>"<% } %>>
+            <button type="submit">Subscribe</button>
+        </form>
+        <div class="newsletter-message" data-message="cta"></div>
+        <% } else if (user && newsletterStatus === 'subscribed') { %>
+        <p style="color: #22c55e; font-size: 16px; margin-top: 16px;">✓ You're already subscribed</p>
+        <% } %>
+    </section>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        // Handle newsletter form submissions
+        document.querySelectorAll('.newsletter-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formId = form.dataset.form;
+                const emailInput = form.querySelector('input[name="email"]');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const messageDiv = document.querySelector(`[data-message="${formId}"]`);
+                const email = emailInput.value;
+                
+                // Disable button
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Subscribing...';
+                messageDiv.innerHTML = '';
+                
+                try {
+                    const response = await fetch('/api/newsletter/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        messageDiv.innerHTML = `<p style="color: #22c55e; margin-top: 12px; font-size: 14px;">✓ ${data.message}</p>`;
+                        form.reset();
+                    } else {
+                        messageDiv.innerHTML = `<p style="color: #ef4444; margin-top: 12px; font-size: 14px;">✗ ${data.error}</p>`;
+                    }
+                } catch (error) {
+                    messageDiv.innerHTML = '<p style="color: #ef4444; margin-top: 12px; font-size: 14px;">✗ Something went wrong. Please try again.</p>';
+                }
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Subscribe';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<nav class="nav">
+    <a href="/" class="logo">Future of Gaming</a>
+    <div class="nav-links">
+        <a href="/archive">Archive</a>
+        <a href="/about">About</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+            <div class="user-menu">
+                <button class="user-avatar" onclick="toggleUserMenu(event)">
+                    <% if (user.image) { %>
+                        <img src="<%= user.image %>" alt="<%= user.name || user.email %>">
+                    <% } else { %>
+                        <%= (user.name || user.email).charAt(0).toUpperCase() %>
+                    <% } %>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-header">
+                        <div class="user-dropdown-email"><%= user.email %></div>
+                    </div>
+                    <a href="/settings" class="user-dropdown-item">Settings</a>
+                    <form action="/api/auth/sign-out" method="POST" onsubmit="return handleLogout(event)">
+                        <button type="submit" class="user-dropdown-item user-dropdown-logout">Sign Out</button>
+                    </form>
+                </div>
+            </div>
+            <script>
+                function toggleUserMenu(event) {
+                    event.stopPropagation();
+                    const dropdown = document.getElementById('userDropdown');
+                    dropdown.classList.toggle('show');
+                }
+
+                document.addEventListener('click', () => {
+                    const dropdown = document.getElementById('userDropdown');
+                    dropdown.classList.remove('show');
+                });
+
+                async function handleLogout(event) {
+                    event.preventDefault();
+                    try {
+                        const response = await fetch('/api/auth/sign-out', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        if (response.ok) {
+                            window.location.href = '/';
+                        }
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                    }
+                    return false;
+                }
+            </script>
+        <% } else { %>
+            <a href="/login" class="subscribe-btn">Login</a>
+        <% } %>
+    </div>
+</nav>
