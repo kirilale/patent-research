@@ -6,11 +6,11 @@ const siteConfig = {
 
 const linksConfig = {
   author: 'https://alexejkirillov.com',
-  twitter: 'https://x.com/tobeacreator',
-  linkedin: 'https://www.linkedin.com/company/contentcreators-com/',
-  facebook: 'https://www.facebook.com/61574841915293/',
-  bluesky: 'https://bsky.app/profile/futureofgaming.com',
-  instagram: 'https://www.instagram.com/contentcreators_com/',
+  twitter: 'https://x.com/alexejkirillov',
+  linkedin: 'https://www.linkedin.com/in/alexejkirillov/',
+  // facebook: 'https://www.facebook.com/61574841915293/',
+  // bluesky: 'https://bsky.app/profile/futureofgaming.com',
+  // instagram: 'https://www.instagram.com/contentcreators_com/',
   feed: `${siteConfig.url}/rss.xml`,
 };
 
