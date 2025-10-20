@@ -54,7 +54,7 @@
 
         <div class="settings-section">
             <h2>Account</h2>
-            <form action="/api/auth/sign-out" method="POST" onsubmit="return handleLogout(event)">
+            <form action="/api/auth/sign-out" method="POST" id="logoutForm">
                 <button type="submit" class="btn-secondary">Sign Out</button>
             </form>
         </div>
@@ -63,7 +63,9 @@
     <%- include('partials/footer') %>
 
     <script>
-        async function handleLogout(event) {
+        // Logout handler
+        const logoutForm = document.getElementById('logoutForm');
+        logoutForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             try {
                 await fetch('/api/auth/sign-out', {
@@ -76,7 +78,7 @@
                 event.target.submit();
             }
             return false;
-        }
+        });
 
         <% if (newsletterStatus !== 'subscribed') { %>
         document.getElementById('subscribeBtn').addEventListener('click', async () => {

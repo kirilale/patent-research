@@ -144,8 +144,9 @@ app.get('/loading', async (req, res) => {
   res.render('loading');
 });
 
-app.get('/about', (req, res) => {
-  res.render('about', { user: null });
+app.get('/about', async (req, res) => {
+  const session = await getSession(req);
+  res.render('about', { user: session?.user || null });
 });
 
 app.get('/settings', async (req, res) => {
