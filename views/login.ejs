@@ -157,20 +157,26 @@
     <script type="module">
         import { createAuthClient } from 'https://esm.sh/better-auth@1.3.28/client';
         
+        const baseURL = '<%= baseURL %>';
+        console.log('[Login] Using baseURL:', baseURL);
+        
         const authClient = createAuthClient({
-            baseURL: '<%= baseURL %>'
+            baseURL: baseURL
         });
 
         // Google Sign In
         document.getElementById('googleSignIn').addEventListener('click', async () => {
+            console.log('[Login] Google sign-in button clicked');
             try {
-                await authClient.signIn.social({
+                console.log('[Login] Calling authClient.signIn.social...');
+                const result = await authClient.signIn.social({
                     provider: 'google',
                     callbackURL: '/'
                 });
+                console.log('[Login] Google sign-in result:', result);
             } catch (error) {
-                console.error('Google sign-in error:', error);
-                document.getElementById('message').innerHTML = '<div class="message error">✗ Failed to sign in with Google</div>';
+                console.error('[Login] Google sign-in error:', error);
+                document.getElementById('message').innerHTML = '<div class="message error">✗ Failed to sign in with Google: ' + error.message + '</div>';
             }
         });
 
