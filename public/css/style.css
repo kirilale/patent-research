@@ -701,7 +701,7 @@ footer {
     padding: 80px 40px;
     max-width: 1200px;
     margin: 0 auto;
-    background: #fafafa;
+    background: #fff;
 }
 
 .section-standard {
@@ -709,7 +709,6 @@ footer {
     max-width: 1200px;
     margin: 0 auto;
     background: #fff;
-    border-top: 1px solid #f0f0f0;
 }
 
 .section-warning {
@@ -717,8 +716,7 @@ footer {
     max-width: 1200px;
     margin: 0 auto;
     background: #fffbf5;
-    border-top: 3px solid #f59e0b;
-    border-left: none;
+    border-left: 4px solid #f59e0b;
 }
 
 .section-final {
@@ -808,28 +806,59 @@ footer {
 .bottom-line-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 60px;
-    margin: 40px 0;
+    gap: 24px;
 }
 
 .bottom-line-card {
-    padding: 0;
-    background: transparent;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.bottom-line-card:nth-child(1) {
+    background: #eff6ff;
+}
+
+.bottom-line-card:nth-child(2) {
+    background: #f0fdf4;
+}
+
+.bottom-line-card:nth-child(3) {
+    background: #faf5ff;
 }
 
 .bottom-line-card h3 {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #000;
+    margin-bottom: 8px;
+}
+
+.bottom-line-card:nth-child(1) h3 {
+    color: #1e3a8a;
+}
+
+.bottom-line-card:nth-child(2) h3 {
+    color: #14532d;
+}
+
+.bottom-line-card:nth-child(3) h3 {
+    color: #581c87;
 }
 
 .bottom-line-card p {
-    font-size: 16px;
-    line-height: 1.7;
-    color: #666;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.bottom-line-card:nth-child(1) p {
+    color: #1e40af;
+}
+
+.bottom-line-card:nth-child(2) p {
+    color: #166534;
+}
+
+.bottom-line-card:nth-child(3) p {
+    color: #6b21a8;
 }
 
 /* Technology Deep Dive */
@@ -851,237 +880,344 @@ footer {
 }
 
 .tech-details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .tech-detail-box {
-    padding: 32px;
-    background: #f5f5f5;
-    border-left: 3px solid #e0e0e0;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
 }
 
 .tech-detail-box h4 {
     font-size: 18px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    color: #111;
 }
 
 .tech-detail-box ul {
     list-style-position: outside;
-    padding-left: 20px;
-    font-size: 16px;
-    line-height: 1.9;
+    padding-left: 24px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #444;
 }
 
 /* Applications */
 .applications-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    max-width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
 }
 
 .application-card {
-    padding: 32px;
+    padding: 16px;
     background: #fff;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .application-card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #111;
 }
 
 .application-card p {
-    font-size: 16px;
-    line-height: 1.8;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-.tag {
-    padding: 8px 16px;
-    background: #e0e0e0;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.timeline {
     font-size: 15px;
-    color: #666;
-    margin-top: 16px;
     line-height: 1.6;
+    margin-bottom: 16px;
+    color: #111;
 }
 
-/* Scenarios */
+.application-card .tags {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.application-card .tag {
+    padding: 4px 8px;
+    background: #f3f4f6;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.application-card .timeline {
+    font-size: 14px;
+    color: #111;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.application-card .timeline strong {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Scenarios - Player Experience */
 .scenarios-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .scenario-card {
-    padding: 40px;
+    padding: 16px;
     background: #fff;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
 }
 
 .scenario-card h3 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 24px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111;
 }
 
 .scenario-moment {
-    font-size: 17px;
-    line-height: 1.8;
-    margin-bottom: 24px;
-    color: #333;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    color: #374151;
 }
 
 .scenario-catch {
-    font-size: 16px;
-    line-height: 1.7;
-    color: #666;
-    padding: 20px;
-    background: #f9f9f9;
-    border-left: 4px solid #000;
-    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-left: 4px solid #6b7280;
+    margin-top: 12px;
+    border-radius: 4px;
 }
 
 /* Future Scenarios */
 .future-scenarios {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .scenario-box {
-    padding: 40px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    padding: 16px;
+    border-radius: 4px;
+    border-left: 4px solid;
 }
 
-.scenario-best,
-.scenario-likely,
+.scenario-best {
+    background: #f0fdf4;
+    border-left-color: #22c55e;
+}
+
+.scenario-likely {
+    background: #eff6ff;
+    border-left-color: #3b82f6;
+}
+
 .scenario-worst {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    background: #fef2f2;
+    border-left-color: #ef4444;
 }
 
 .scenario-box h3 {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+}
+
+.scenario-best h3 {
+    color: #14532d;
+}
+
+.scenario-likely h3 {
+    color: #1e3a8a;
+}
+
+.scenario-worst h3 {
+    color: #7f1d1d;
 }
 
 .probability {
     font-size: 14px;
-    font-weight: 500;
-    color: #666;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #e0e0e0;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.scenario-best .probability {
+    color: #15803d;
+}
+
+.scenario-likely .probability {
+    color: #1d4ed8;
+}
+
+.scenario-worst .probability {
+    color: #b91c1c;
 }
 
 .scenario-outcome {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    line-height: 1.4;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.scenario-best .scenario-outcome {
+    color: #166534;
+}
+
+.scenario-likely .scenario-outcome {
+    color: #1e40af;
+}
+
+.scenario-worst .scenario-outcome {
+    color: #991b1b;
 }
 
 .scenario-detail {
-    font-size: 16px;
-    line-height: 1.8;
-    margin-bottom: 0;
-    color: #333;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.scenario-best .scenario-detail {
+    color: #166534;
+}
+
+.scenario-likely .scenario-detail {
+    color: #1e40af;
+}
+
+.scenario-worst .scenario-detail {
+    color: #991b1b;
 }
 
 /* Competitive Analysis */
 .competitive-holder {
-    padding: 24px;
-    background: #f5f5f5;
-    margin-bottom: 32px;
-}
-
-.competitive-holder h3 {
-    font-size: 20px;
-    font-weight: 600;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 4px solid #000;
     margin-bottom: 16px;
 }
 
+.competitive-holder h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.competitive-holder p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
+}
+
 .companies-affected {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
 }
 
 .companies-affected h3 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
+    color: #111;
 }
 
 .company-impact {
-    padding: 24px;
-    margin-bottom: 20px;
-    background: #fafafa;
-    border-left: 4px solid #000;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 4px solid #6b7280;
 }
 
 .company-impact h4 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.company-impact p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
 }
 
 .competitive-details {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .comp-block {
-    padding: 20px;
-    background: #f5f5f5;
+    margin-bottom: 16px;
 }
 
 .comp-block h4 {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.comp-block p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
 }
 
 /* Reality Check */
+.reality-check-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .reality-block {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
 }
 
 .reality-block h3 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+    color: #111;
 }
 
 .reality-block p,
 .reality-block ul {
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
 }
 
 .reality-block ul {
-    list-style-position: inside;
+    list-style: disc;
+    padding-left: 24px;
+}
+
+.reality-block ul li {
+    margin-bottom: 4px;
 }
 
 /* What to Watch */

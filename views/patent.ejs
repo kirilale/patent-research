@@ -81,6 +81,7 @@
     }
     </script>
     <% } %>
+    <%- include('partials/analytics') %>
 </head>
 <body>
     <%- include('partials/nav') %>
@@ -119,8 +120,6 @@
                 <% if (patent.scenarios) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#scenarios">Future Scenarios</a></li><% } %>
                 <% if (patent.competitive_landscape || patent.competitive_impact) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#competitive">Competitive Analysis</a></li><% } %>
                 <% if (patent.reality_check) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#reality-check">Reality Check</a></li><% } %>
-                <% if (patent.what_to_watch) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#what-to-watch">What to Watch</a></li><% } %>
-                <% if (patent.audience_takeaways) { %><li class="<%= !user ? 'locked-item' : '' %>"><a href="#takeaways">Audience Takeaways</a></li><% } %>
                 <% if (patent.final_take) { %><li><a href="#final-take">Final Take</a></li><% } %>
             </ul>
         </nav>
@@ -460,56 +459,31 @@
         <%- include('partials/locked-wrapper-start') %>
         <section id="reality-check" class="section-warning">
             <h2 class="section-heading">Reality Check</h2>
-            <% if (patent.reality_check.hype_vs_substance) { %>
-            <div class="reality-block">
-                <h3>Hype vs Substance</h3>
-                <p><%= patent.reality_check.hype_vs_substance %></p>
-            </div>
-            <% } %>
-            <% if (patent.reality_check.biggest_risk) { %>
-            <div class="reality-block">
-                <h3>Biggest Risk</h3>
-                <p><%= patent.reality_check.biggest_risk %></p>
-            </div>
-            <% } %>
-            <% if (patent.reality_check.key_assumptions && Array.isArray(patent.reality_check.key_assumptions) && patent.reality_check.key_assumptions.length > 0) { %>
-            <div class="reality-block">
-                <h3>Key Assumptions</h3>
-                <ul>
-                    <% patent.reality_check.key_assumptions.forEach(assumption => { %>
-                    <li><%= assumption %></li>
-                    <% }); %>
-                </ul>
-            </div>
-            <% } %>
-        </section>
-        <%- include('partials/locked-wrapper-end') %>
-        <% } %>
-
-        <!-- What to Watch -->
-        <% if (patent.what_to_watch) { %>
-        <%- include('partials/locked-wrapper-start') %>
-        <section id="what-to-watch" class="section-standard">
-            <h2 class="section-heading">What to Watch</h2>
-            <div class="watch-grid">
-                <% if (patent.what_to_watch.key_milestones && Array.isArray(patent.what_to_watch.key_milestones) && patent.what_to_watch.key_milestones.length > 0) { %>
-                <div class="watch-column">
-                    <h3>Key Milestones</h3>
-                    <ul>
-                        <% patent.what_to_watch.key_milestones.forEach(milestone => { %>
-                        <li><%= milestone %></li>
-                        <% }); %>
-                    </ul>
+            <div class="reality-check-grid">
+                <% if (patent.reality_check.hype_vs_substance) { %>
+                <div class="reality-block">
+                    <h3>Hype vs Substance</h3>
+                    <p><%= patent.reality_check.hype_vs_substance %></p>
                 </div>
                 <% } %>
-                <% if (patent.what_to_watch.competitor_moves && Array.isArray(patent.what_to_watch.competitor_moves) && patent.what_to_watch.competitor_moves.length > 0) { %>
-                <div class="watch-column">
-                    <h3>Competitor Moves</h3>
+                <% if (patent.reality_check.key_assumptions) { %>
+                <div class="reality-block">
+                    <h3>Key Assumptions</h3>
+                    <% if (Array.isArray(patent.reality_check.key_assumptions)) { %>
                     <ul>
-                        <% patent.what_to_watch.competitor_moves.forEach(move => { %>
-                        <li><%= move %></li>
+                        <% patent.reality_check.key_assumptions.forEach(assumption => { %>
+                        <li><%= assumption %></li>
                         <% }); %>
                     </ul>
+                    <% } else { %>
+                    <p><%= patent.reality_check.key_assumptions %></p>
+                    <% } %>
+                </div>
+                <% } %>
+                <% if (patent.reality_check.biggest_risk) { %>
+                <div class="reality-block">
+                    <h3>Biggest Risk</h3>
+                    <p><%= patent.reality_check.biggest_risk %></p>
                 </div>
                 <% } %>
             </div>
@@ -517,43 +491,7 @@
         <%- include('partials/locked-wrapper-end') %>
         <% } %>
 
-        <!-- Audience Takeaways -->
-        <% if (patent.audience_takeaways) { %>
-        <%- include('partials/locked-wrapper-start') %>
-        <section id="takeaways" class="section-standard">
-            <h2 class="section-heading">Audience Takeaways</h2>
-            <div class="takeaways-grid">
-                <% if (patent.audience_takeaways.game_enthusiasts) { %>
-                <div class="takeaway-card">
-                    <h3>Game Enthusiasts</h3>
-                    <% if (patent.audience_takeaways.game_enthusiasts.what_this_means) { %>
-                    <p><%= patent.audience_takeaways.game_enthusiasts.what_this_means %></p>
-                    <% } %>
-                </div>
-                <% } %>
-                <% if (patent.audience_takeaways.startups_indie_devs) { %>
-                <div class="takeaway-card">
-                    <h3>Startups & Indie Devs</h3>
-                    <% if (patent.audience_takeaways.startups_indie_devs.action_item) { %>
-                    <p><strong>Action:</strong> <%= patent.audience_takeaways.startups_indie_devs.action_item %></p>
-                    <% } %>
-                    <% if (patent.audience_takeaways.startups_indie_devs.opportunity_or_threat) { %>
-                    <p><strong>Impact:</strong> <%= patent.audience_takeaways.startups_indie_devs.opportunity_or_threat %></p>
-                    <% } %>
-                </div>
-                <% } %>
-                <% if (patent.audience_takeaways.gaming_industry_employees) { %>
-                <div class="takeaway-card">
-                    <h3>Industry Employees</h3>
-                    <% if (patent.audience_takeaways.gaming_industry_employees.developers_engineers) { %>
-                    <p><%= patent.audience_takeaways.gaming_industry_employees.developers_engineers %></p>
-                    <% } %>
-                </div>
-                <% } %>
-            </div>
-        </section>
-        <%- include('partials/locked-wrapper-end') %>
-        <% } %>
+
 
         <!-- Final Take -->
         <% if (patent.final_take) { %>
