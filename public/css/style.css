@@ -165,6 +165,17 @@ body {
     font-weight: 600;
 }
 
+.featured-content-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: opacity 0.2s;
+}
+
+.featured-content-link:hover {
+    opacity: 0.9;
+}
+
 .featured-content {
     display: grid;
     grid-template-columns: 1fr 1fr;

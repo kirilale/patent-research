@@ -66,40 +66,42 @@
     <% if (featured) { %>
     <section class="featured">
         <div class="section-title">Latest Analysis</div>
-        <div class="featured-content">
-            <div class="featured-text">
-                <h2><%= featured.title %></h2>
-                <% if (featured.executive_summary && featured.executive_summary.key_finding) { %>
-                <p class="excerpt"><%= featured.executive_summary.key_finding %></p>
-                <% } else { %>
-                <p class="excerpt"><%= featured.abstract.substring(0, 200) %>...</p>
-                <% } %>
-                <div class="meta">
-                    <% if (featured.scores && featured.scores.impact_score) { %>
-                    <div class="meta-item">
-                        Impact
-                        <span><%= featured.scores.impact_score %>/10</span>
-                    </div>
+        <a href="/patent/<%= featured.patent_number %>" class="featured-content-link">
+            <div class="featured-content">
+                <div class="featured-text">
+                    <h2><%= featured.title %></h2>
+                    <% if (featured.executive_summary && featured.executive_summary.key_finding) { %>
+                    <p class="excerpt"><%= featured.executive_summary.key_finding %></p>
+                    <% } else { %>
+                    <p class="excerpt"><%= featured.abstract.substring(0, 200) %>...</p>
                     <% } %>
-                    <% if (featured.published_date) { %>
-                    <div class="meta-item">
-                        Published Date
-                        <span><%= new Date(featured.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+                    <div class="meta">
+                        <% if (featured.scores && featured.scores.impact_score) { %>
+                        <div class="meta-item">
+                            Impact
+                            <span><%= featured.scores.impact_score %>/10</span>
+                        </div>
+                        <% } %>
+                        <% if (featured.published_date) { %>
+                        <div class="meta-item">
+                            Published Date
+                            <span><%= new Date(featured.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+                        </div>
+                        <% } %>
+                        <% if (featured.assignees && featured.assignees.length > 0) { %>
+                        <div class="meta-item">
+                            Company
+                            <span><%= featured.assignees.filter(a => a !== null).join(', ') %></span>
+                        </div>
+                        <% } %>
                     </div>
-                    <% } %>
-                    <% if (featured.assignees && featured.assignees.length > 0) { %>
-                    <div class="meta-item">
-                        Company
-                        <span><%= featured.assignees.filter(a => a !== null).join(', ') %></span>
-                    </div>
-                    <% } %>
+                    <span class="read-link">Read full analysis →</span>
                 </div>
-                <a href="/patent/<%= featured.patent_number %>" class="read-link">Read full analysis →</a>
+                <div class="featured-visual">
+                    <img src="/api/patent-card/<%= featured.patent_number %>.svg" alt="<%= featured.title %> Scorecard" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+                </div>
             </div>
-            <div class="featured-visual">
-                <img src="/api/patent-card/<%= featured.patent_number %>.svg" alt="<%= featured.title %> Scorecard" style="width: 100%; height: 100%; object-fit: contain; display: block;">
-            </div>
-        </div>
+        </a>
     </section>
     <% } %>
 
