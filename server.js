@@ -129,7 +129,8 @@ app.get('/login', (req, res) => {
   });
 });
 
-app.get('/loading', (req, res) => {
+app.get('/loading', async (req, res) => {
+  await emitLoginEvent(req);
   res.render('loading');
 });
 
