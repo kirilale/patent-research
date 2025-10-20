@@ -420,8 +420,11 @@ app.use((err, req, res, next) => {
   }
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Bind to 0.0.0.0 in production (for Docker), localhost in development
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
