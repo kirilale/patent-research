@@ -118,7 +118,11 @@
                     <%= patent.assignees && patent.assignees.length > 0 ? patent.assignees.filter(a => a !== null).join(', ') : 'Patent Analysis' %>
                 </div>
                 <h3><%= toTitleCase(patent.title) %></h3>
+                <% if (patent.executive_summary && patent.executive_summary.one_paragraph_overview) { %>
+                <p><%= patent.executive_summary.one_paragraph_overview.substring(0, 150) %>...</p>
+                <% } else { %>
                 <p><%= patent.abstract.substring(0, 150) %>...</p>
+                <% } %>
             </a>
             <% }); %>
         </div>
