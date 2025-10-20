@@ -39,14 +39,19 @@
                     try {
                         const response = await fetch('/api/auth/sign-out', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include'
                         });
                         if (response.ok) {
-                            window.location.href = '/';
+                            // Force hard reload to clear any cached session data
+                            window.location.replace('/');
+                            window.location.reload(true);
                         }
                     } catch (error) {
                         console.error('Logout error:', error);
-                        window.location.href = '/';
+                        // Force hard reload even on error
+                        window.location.replace('/');
+                        window.location.reload(true);
                     }
                     return false;
                 }
