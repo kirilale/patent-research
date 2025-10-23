@@ -4,7 +4,8 @@ const validator = require('validator');
 const { subscribeContact } = require('../lib/emailoctopus');
 const { auth } = require('../auth');
 const { pool } = require('../lib/db');
-const { checkNewsletterRateLimit } = require('../lib/rate-limit');
+const { checkNewsletterRateLimit, getClientIP } = require('../lib/rate-limit');
+const { checkEmailSpam } = require('../lib/cleantalk');
 
 router.post('/subscribe', async (req, res) => {
   const { email } = req.body;
@@ -23,6 +24,24 @@ router.post('/subscribe', async (req, res) => {
     return res.status(429).json({ 
       error: rateLimit.message,
       retryAfter: 86400 // 24 hours in seconds
+    });
+  }
+
+  // Check for spam using CleanTalk
+  const clientIP = getClientIP(req);
+  const spamCheck = await checkEmailSpam(sanitizedEmail, clientIP);
+  
+  if (spamCheck.isSpam) {
+    console.log('[Newsletter] Spam email blocked:', {
+      email: sanitizedEmail,
+      ip: clientIP,
+      score: spamCheck.score,
+      reason: spamCheck.message
+    });
+    
+    // Return a generic error to avoid revealing spam detection
+    return res.status(400).json({ 
+      error: 'Unable to process subscription. Please contact support if this persists.'
     });
   }
 
