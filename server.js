@@ -46,6 +46,11 @@ app.set('views', path.join(__dirname, 'views'));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Redirect favicon.ico to favicon.svg to eliminate 404
+app.get('/favicon.ico', (req, res) => {
+  res.redirect(301, '/favicon.svg');
+});
+
 // Make site config, links, and utility functions available to all views
 app.use((req, res, next) => {
   res.locals.siteConfig = siteConfig;
