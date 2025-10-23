@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc><%= siteConfig.url %>/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Publications Page -->
+  <url>
+    <loc><%= siteConfig.url %>/publications</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- About Page -->
+  <url>
+    <loc><%= siteConfig.url %>/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Patent Pages -->
+  <% patents.forEach(patent => { %>
+  <url>
+    <loc><%= siteConfig.url %>/patent/<%= patent.patent_number %></loc>
+    <lastmod><%= new Date(patent.published_date).toISOString().split('T')[0] %></lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <% }); %>
+</urlset>

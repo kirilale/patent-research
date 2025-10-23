@@ -414,6 +414,68 @@ app.get('/archive', (req, res) => {
   res.redirect(301, '/publications');
 });
 
+// RSS Feed
+app.get('/rss', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        p.patent_id,
+        p.patent_number,
+        p.title,
+        p.abstract,
+        p.published_date,
+        array_agg(DISTINCT a.assignee_name) as assignees
+      FROM patents p
+      INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
+      WHERE ad.executive_summary IS NOT NULL
+        AND p.published_date IS NOT NULL
+      GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, p.published_date
+      ORDER BY p.published_date DESC
+      LIMIT 50
+    `;
+    
+    const result = await pool.query(query);
+    const patents = result.rows;
+    
+    res.set('Content-Type', 'application/rss+xml');
+    res.render('rss', { patents, layout: false });
+  } catch (err) {
+    console.error('Error generating RSS feed:', err);
+    res.status(500).send('Error generating RSS feed');
+  }
+});
+
+// Sitemap
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const query = `
+      SELECT patent_number, published_date
+      FROM patents
+      WHERE published_date IS NOT NULL
+      ORDER BY published_date DESC
+    `;
+    
+    const result = await pool.query(query);
+    const patents = result.rows;
+    
+    res.set('Content-Type', 'application/xml');
+    res.render('sitemap', { patents, layout: false });
+  } catch (err) {
+    console.error('Error generating sitemap:', err);
+    res.status(500).send('Error generating sitemap');
+  }
+});
+
+// Robots.txt
+app.get('/robots.txt', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send(`User-agent: *
+Allow: /
+Sitemap: ${siteConfig.url}/sitemap.xml`);
+});
+
 // Health check endpoint
 app.get('/health', async (req, res) => {
   try {
