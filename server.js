@@ -355,7 +355,7 @@ app.get('/patent/:patentNumber', async (req, res) => {
   }
 });
 
-app.get('/archive', async (req, res) => {
+app.get('/publications', async (req, res) => {
   try {
     const query = `
       SELECT 
@@ -366,6 +366,7 @@ app.get('/archive', async (req, res) => {
         p.filing_date,
         p.grant_date,
         p.published_date,
+        p.patent_status,
         ad.executive_summary,
         ad.scores,
         array_agg(DISTINCT a.assignee_name) as assignees
@@ -376,7 +377,7 @@ app.get('/archive', async (req, res) => {
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
-               p.filing_date, p.grant_date, p.published_date, ad.executive_summary, ad.scores
+               p.filing_date, p.grant_date, p.published_date, p.patent_status, ad.executive_summary, ad.scores
       ORDER BY p.published_date DESC, p.created_at DESC
     `;
     
@@ -396,11 +397,16 @@ app.get('/archive', async (req, res) => {
       }
     }
     
-    res.render('archive', { patents, user: session?.user || null, newsletterStatus });
+    res.render('publications', { patents, user: session?.user || null, newsletterStatus });
   } catch (err) {
-    console.error('Error fetching archive:', err);
+    console.error('Error fetching publications:', err);
     res.status(500).send('Server error');
   }
+});
+
+// Redirect old archive URL to publications
+app.get('/archive', (req, res) => {
+  res.redirect(301, '/publications');
 });
 
 // Health check endpoint

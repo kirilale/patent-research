@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/logo.svg">
+    <title>Publications - Future of Gaming | All Patent Analyses</title>
+    <meta name="description" content="Browse all gaming patent analyses and strategic intelligence reports. Discover insights on gaming innovation and industry trends.">
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Schema.org structured data for CollectionPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Patent Analysis Publications",
+      "description": "Complete collection of gaming patent analyses and strategic intelligence reports",
+      "url": "<%= siteConfig.url %>/publications",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "<%= siteConfig.url %>"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Publications",
+            "item": "<%= siteConfig.url %>/publications"
+          }
+        ]
+      }
+    }
+    </script>
+    <%- include('partials/analytics') %>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <section class="archive-header">
+        <h1>Publications</h1>
+        <p class="subtitle">Strategic intelligence reports on gaming patents and innovation</p>
+    </section>
+
+    <section class="archive-list">
+        <div class="filters-bar">
+            <div class="filters-right">
+                <select id="status-filter">
+                    <option value="all">All</option>
+                    <option value="granted">Granted</option>
+                    <option value="filed">Filed</option>
+                </select>
+                
+                <select id="sort-filter">
+                    <option value="date-desc">Newest</option>
+                    <option value="date-asc">Oldest</option>
+                    <option value="alpha-asc">A-Z</option>
+                    <option value="alpha-desc">Z-A</option>
+                </select>
+                
+                <span class="results-count">
+                    <span id="results-count"><%= patents.length %></span> results
+                </span>
+            </div>
+        </div>
+        
+        <div id="publications-container">
+        <% if (patents && patents.length > 0) { %>
+            <% patents.forEach(patent => { %>
+            <a href="/patent/<%= patent.patent_number %>" 
+               class="archive-item publication-item" 
+               data-status="<%= patent.patent_status || (patent.grant_date ? 'granted' : 'filed') %>"
+               data-title="<%= patent.title.toLowerCase() %>"
+               data-published="<%= patent.published_date %>">
+                <% if (patent.published_date) { %>
+                <div style="font-size: 10px; color: #999; margin-bottom: 4px;">
+                    Published: <%= new Date(patent.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                    <% if (patent.grant_date) { %>
+                        <span style="margin-left: 12px; color: #22c55e;">● Granted</span>
+                    <% } else { %>
+                        <span style="margin-left: 12px; color: #f59e0b;">● Filed</span>
+                    <% } %>
+                </div>
+                <% } %>
+                <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px;">
+                    <%= patent.assignees && patent.assignees.length > 0 ? patent.assignees.filter(a => a !== null).join(', ') : 'Patent Analysis' %>
+                </div>
+                <h2><%= toTitleCase(patent.title) %></h2>
+                <% if (patent.executive_summary && patent.executive_summary.one_paragraph_overview) { %>
+                <p class="excerpt"><%= patent.executive_summary.one_paragraph_overview.substring(0, 200) %>...</p>
+                <% } else { %>
+                <p class="excerpt"><%= patent.abstract.substring(0, 200) %>...</p>
+                <% } %>
+            </a>
+            <% }); %>
+        <% } else { %>
+            <p class="no-results">No publications available yet.</p>
+        <% } %>
+        </div>
+    </section>
+
+    <script>
+        function applyFilters() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const sortFilter = document.getElementById('sort-filter').value;
+            const items = Array.from(document.querySelectorAll('.publication-item'));
+            
+            // Filter items
+            let visibleCount = 0;
+            items.forEach(item => {
+                const itemStatus = item.dataset.status;
+                let shouldShow = true;
+                
+                if (statusFilter === 'granted' && itemStatus !== 'granted') {
+                    shouldShow = false;
+                } else if (statusFilter === 'filed' && itemStatus !== 'filed') {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Get visible items for sorting
+            const visibleItems = items.filter(item => item.style.display !== 'none');
+            
+            // Sort items
+            visibleItems.sort((a, b) => {
+                switch(sortFilter) {
+                    case 'date-desc':
+                        return new Date(b.dataset.published) - new Date(a.dataset.published);
+                    case 'date-asc':
+                        return new Date(a.dataset.published) - new Date(b.dataset.published);
+                    case 'alpha-asc':
+                        return a.dataset.title.localeCompare(b.dataset.title);
+                    case 'alpha-desc':
+                        return b.dataset.title.localeCompare(a.dataset.title);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Reorder DOM elements
+            const container = document.getElementById('publications-container');
+            visibleItems.forEach(item => {
+                container.appendChild(item);
+            });
+            
+            // Update count
+            document.getElementById('results-count').textContent = visibleCount;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add event listeners to filters
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+            document.getElementById('sort-filter').addEventListener('change', applyFilters);
+            
+            // Apply initial filters
+            applyFilters();
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

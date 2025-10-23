@@ -28,6 +28,15 @@ body {
     letter-spacing: -0.02em;
     color: #000;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    width: 50px;
+    height: 50px;
+    display: block;
 }
 
 .nav-links {
@@ -1591,7 +1600,7 @@ footer {
 .archive-list {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px;
+    padding: 0 40px 40px;
 }
 
 .archive-item {
@@ -1657,6 +1666,45 @@ footer {
     padding: 80px 40px;
     font-size: 18px;
     color: #999;
+}
+
+/* Filters Bar */
+.filters-bar {
+    padding: 24px 0;
+    margin-bottom: 24px;
+}
+
+.filters-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.filters-right select {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    cursor: pointer;
+    color: #000;
+}
+
+.filters-right select:hover {
+    border-color: #999;
+}
+
+.filters-right select:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.results-count {
+    font-size: 12px;
+    color: #999;
+    padding-left: 12px;
+    border-left: 1px solid #e0e0e0;
 }
 
 @media (max-width: 1024px) {
@@ -1777,7 +1825,30 @@ footer {
     }
     
     .archive-list {
-        padding: 24px;
+        padding: 0 24px 24px;
+    }
+    
+    .filters-bar {
+        padding: 16px 0;
+    }
+    
+    .filters-right {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .filters-right select {
+        flex: 1;
+        min-width: 100px;
+    }
+    
+    .results-count {
+        width: 100%;
+        text-align: center;
+        padding-left: 0;
+        padding-top: 8px;
+        border-left: none;
+        border-top: 1px solid #e0e0e0;
     }
     
     .archive-item {
