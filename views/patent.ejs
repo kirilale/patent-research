@@ -6,12 +6,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/logo.svg">
-    <title><%= toTitleCase(patent.title) %> - Future of Gaming</title>
+    <title><%= patent.display_title %> - Future of Gaming</title>
     <meta name="description" content="<%= patent.abstract ? patent.abstract.substring(0, 155) : patent.title %>">
     
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="<%= toTitleCase(patent.title) %>">
+    <meta property="og:title" content="<%= patent.display_title %>">
     <meta property="og:description" content="<%= patent.abstract ? patent.abstract.substring(0, 200) : patent.title %>">
     <meta property="og:url" content="<%= siteConfig.url %>/patent/<%= patent.patent_number %>">
     <meta property="og:image" content="<%= siteConfig.url %>/api/patent-card/<%= patent.patent_number %>.svg">
@@ -21,7 +21,7 @@
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= toTitleCase(patent.title) %>">
+    <meta name="twitter:title" content="<%= patent.display_title %>">
     <meta name="twitter:description" content="<%= patent.abstract ? patent.abstract.substring(0, 200) : patent.title %>">
     <meta name="twitter:image" content="<%= siteConfig.url %>/api/patent-card/<%= patent.patent_number %>.svg">
     
@@ -32,7 +32,7 @@
     {
       "@context": "https://schema.org",
       "@type": "TechArticle",
-      "headline": "<%= toTitleCase(patent.title).replace(/"/g, '\\"') %>",
+      "headline": "<%= patent.display_title.replace(/"/g, '\\"') %>",
       "description": "<%= patent.abstract ? patent.abstract.substring(0, 200).replace(/"/g, '\\"') : patent.title.replace(/"/g, '\\"') %>",
       "url": "<%= siteConfig.url %>/patent/<%= patent.patent_number %>",
       "datePublished": "<%= patent.grant_date ? patent.grant_date.toISOString() : patent.filing_date.toISOString() %>",
@@ -69,7 +69,7 @@
       "@type": "Review",
       "itemReviewed": {
         "@type": "CreativeWork",
-        "name": "<%= toTitleCase(patent.title).replace(/"/g, '\\"') %>"
+        "name": "<%= patent.display_title.replace(/"/g, '\\"') %>"
       },
       "reviewRating": {
         "@type": "Rating",
@@ -95,7 +95,7 @@
             <% if (patent.published_date) { %>
             <div class="patent-meta">Published Date: <%= new Date(patent.published_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
             <% } %>
-            <h1><%= toTitleCase(patent.title) %></h1>
+            <h1><%= patent.display_title %></h1>
             <% if (patent.assignees && patent.assignees.length > 0) { %>
             <p class="assignee"><%= patent.assignees.filter(a => a !== null).join(', ') %></p>
             <% } %>

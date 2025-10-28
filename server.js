@@ -291,6 +291,7 @@ app.get('/patent/:patentNumber', async (req, res) => {
         ad.final_take,
         ad.scores,
         ad.competitive_impact,
+        ad.newsletter_content,
         array_agg(DISTINCT a.assignee_name) as assignees,
         array_agg(DISTINCT i.full_name) as inventors
       FROM patents p
@@ -324,6 +325,9 @@ app.get('/patent/:patentNumber', async (req, res) => {
     }
     
     const patent = result.rows[0];
+    
+    // Extract newsletter title if available
+    patent.display_title = patent.newsletter_content?.subject_line || patent.title;
     
     // Get previous and next patents for navigation (optimized with window functions)
     const navQuery = `
