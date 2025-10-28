@@ -73,7 +73,7 @@
         <a href="/patent/<%= featured.patent_number %>" class="featured-content-link">
             <div class="featured-content">
                 <div class="featured-text">
-                    <h2><%= featured.title %></h2>
+                    <h2><%= featured.display_title %></h2>
                     <% if (featured.executive_summary && featured.executive_summary.key_finding) { %>
                     <p class="excerpt"><%= featured.executive_summary.key_finding %></p>
                     <% } else { %>
@@ -102,7 +102,7 @@
                     <span class="read-link">Read full analysis →</span>
                 </div>
                 <div class="featured-visual">
-                    <img src="/api/patent-card/<%= featured.patent_number %>.svg" alt="<%= featured.title %> Scorecard" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+                    <img src="/api/patent-card/<%= featured.patent_number %>.svg" alt="<%= featured.display_title %> Scorecard" style="width: 100%; height: 100%; object-fit: contain; display: block;">
                 </div>
             </div>
         </a>
@@ -121,7 +121,7 @@
                 <div class="label" style="font-size: 12px; font-weight: 600;">
                     <%= patent.assignees && patent.assignees.length > 0 ? patent.assignees.filter(a => a !== null).join(', ') : 'Patent Analysis' %>
                 </div>
-                <h3><%= toTitleCase(patent.title) %></h3>
+                <h3><%= patent.display_title %></h3>
                 <% if (patent.executive_summary && patent.executive_summary.one_paragraph_overview) { %>
                 <p><%= patent.executive_summary.one_paragraph_overview.substring(0, 150) %>...</p>
                 <% } else { %>

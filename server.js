@@ -200,6 +200,7 @@ app.get('/', async (req, res) => {
         p.published_date,
         ad.executive_summary,
         ad.scores,
+        ad.newsletter_content,
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
@@ -208,13 +209,16 @@ app.get('/', async (req, res) => {
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
-               p.filing_date, p.grant_date, p.published_date, ad.executive_summary, ad.scores
+               p.filing_date, p.grant_date, p.published_date, ad.executive_summary, ad.scores, ad.newsletter_content
       ORDER BY p.published_date DESC
       LIMIT 1
     `;
     
     const featuredResult = await pool.query(featuredQuery);
     const featured = featuredResult.rows[0] || null;
+    if (featured) {
+      featured.display_title = featured.newsletter_content?.subject_line || featured.title;
+    }
 
     // Get recent patents with deep analysis (excluding featured)
     const recentQuery = `
@@ -227,6 +231,7 @@ app.get('/', async (req, res) => {
         p.grant_date,
         p.published_date,
         ad.scores,
+        ad.newsletter_content,
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
@@ -236,13 +241,16 @@ app.get('/', async (req, res) => {
         AND p.published_date IS NOT NULL
         AND ($1::uuid IS NULL OR p.patent_id != $1)
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
-               p.filing_date, p.grant_date, p.published_date, ad.scores
+               p.filing_date, p.grant_date, p.published_date, ad.scores, ad.newsletter_content
       ORDER BY p.published_date DESC, p.created_at DESC
       LIMIT 3
     `;
     
     const recentResult = await pool.query(recentQuery, [featured?.patent_id || null]);
-    const recentPatents = recentResult.rows;
+    const recentPatents = recentResult.rows.map(patent => ({
+      ...patent,
+      display_title: patent.newsletter_content?.subject_line || patent.title
+    }));
 
     // Get newsletter status if user is logged in (check EmailOctopus)
     let newsletterStatus = null;
