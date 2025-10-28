@@ -204,7 +204,7 @@ app.get('/', async (req, res) => {
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
-      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id AND pa.sequence_order = 0
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
@@ -235,7 +235,7 @@ app.get('/', async (req, res) => {
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
-      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id AND pa.sequence_order = 0
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
@@ -304,7 +304,7 @@ app.get('/patent/:patentNumber', async (req, res) => {
         array_agg(DISTINCT i.full_name) as inventors
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
-      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id AND pa.sequence_order = 0
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       LEFT JOIN patent_inventors pi ON p.patent_id = pi.patent_id
       LEFT JOIN inventors i ON pi.inventor_id = i.inventor_id
@@ -389,13 +389,13 @@ app.get('/publications', async (req, res) => {
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
-      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id AND pa.sequence_order = 0
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
-      GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
-               p.filing_date, p.grant_date, p.published_date, p.patent_status, ad.executive_summary, ad.scores
-      ORDER BY p.published_date DESC, p.created_at DESC
+      GROUP BY p.patent_id, p.patent_number, p.title, p.patent_status, ad.executive_summary, ad.scores
+      ORDER BY p.published_date DESC
+      LIMIT 50
     `;
     
     const session = await getSession(req);
@@ -439,7 +439,7 @@ app.get('/rss', async (req, res) => {
         array_agg(DISTINCT a.assignee_name) as assignees
       FROM patents p
       INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
-      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id
+      LEFT JOIN patent_assignees pa ON p.patent_id = pa.patent_id AND pa.sequence_order = 0
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
