@@ -208,6 +208,8 @@ app.get('/', async (req, res) => {
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
+        AND p.published_date <= NOW()
+        AND p.publish_status = 'published'
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
                p.filing_date, p.grant_date, p.published_date, ad.executive_summary, ad.scores, ad.newsletter_content
       ORDER BY p.published_date DESC
@@ -239,6 +241,8 @@ app.get('/', async (req, res) => {
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
+        AND p.published_date <= NOW()
+        AND p.publish_status = 'published'
         AND ($1::uuid IS NULL OR p.patent_id != $1)
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, 
                p.filing_date, p.grant_date, p.published_date, ad.scores, ad.newsletter_content
@@ -310,6 +314,8 @@ app.get('/patent/:patentNumber', async (req, res) => {
       LEFT JOIN inventors i ON pi.inventor_id = i.inventor_id
       WHERE p.patent_number = $1
         AND p.published_date IS NOT NULL
+        AND p.published_date <= NOW()
+        AND p.publish_status = 'published'
       GROUP BY p.patent_id, ad.deep_analysis_id
     `;
     
@@ -348,6 +354,8 @@ app.get('/patent/:patentNumber', async (req, res) => {
         INNER JOIN ai_analysis_deep ad ON p.patent_id = ad.patent_id
         WHERE ad.executive_summary IS NOT NULL
           AND p.published_date IS NOT NULL
+          AND p.published_date <= NOW()
+          AND p.publish_status = 'published'
       )
       SELECT prev_patent, next_patent 
       FROM numbered 
@@ -393,6 +401,8 @@ app.get('/publications', async (req, res) => {
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
+        AND p.published_date <= NOW()
+        AND p.publish_status = 'published'
       GROUP BY p.patent_id, p.patent_number, p.title, p.patent_status, ad.executive_summary, ad.scores
       ORDER BY p.published_date DESC
       LIMIT 50
@@ -443,6 +453,8 @@ app.get('/rss', async (req, res) => {
       LEFT JOIN assignees a ON pa.assignee_id = a.assignee_id
       WHERE ad.executive_summary IS NOT NULL
         AND p.published_date IS NOT NULL
+        AND p.published_date <= NOW()
+        AND p.publish_status = 'published'
       GROUP BY p.patent_id, p.patent_number, p.title, p.abstract, p.published_date
       ORDER BY p.published_date DESC
       LIMIT 50
@@ -466,6 +478,8 @@ app.get('/sitemap.xml', async (req, res) => {
       SELECT patent_number, published_date
       FROM patents
       WHERE published_date IS NOT NULL
+        AND published_date <= NOW()
+        AND publish_status = 'published'
       ORDER BY published_date DESC
     `;
     
