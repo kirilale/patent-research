@@ -89,7 +89,7 @@ const publishScheduledPatents = inngest.createFunction(
           
           await resend.emails.send({
             from: process.env.EMAIL_FROM || 'noreply@auth.futureofgaming.com',
-            to: process.env.ADMIN_EMAIL || 'alexej.kir@gmail.com',
+            to: process.env.ADMIN_EMAIL || 'contact@futureofgaming.com',
             subject: subject,
             html: html
           });
